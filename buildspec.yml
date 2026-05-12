@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+
+  install:
+    runtime-versions:
+      docker: 20
+
+  pre_build:
+    commands:
+      - echo Logging in to DockerHub
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+  build:
+    commands:
+      - echo Building Docker image
+      - docker build -t brain-tasks-app .
+
+      - echo Tagging Docker image
+      - docker tag brain-tasks-app sushil2112/brain-tasks-app:v1
+
+  post_build:
+    commands:
+      - echo Pushing Docker image
+      - docker push sushil2112/brain-tasks-app:v1
+
+      - echo Deploying to Kubernetes
+      - kubectl apply -f deployment.yaml
+      - kubectl apply -f service.yaml
